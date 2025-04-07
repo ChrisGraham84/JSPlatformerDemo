@@ -84,9 +84,10 @@ window.addEventListener("keydown", (ev) => {
       case "w":
         keys.w.pressed = true;
         player.lastKey = "w";
-        if (player.velocity.y == 0) {
+        if (player.velocity.y == 0 && !player.airborn) {
           player.velocity.y = -20;
           player.grounded = false;
+          player.airborn = true;
         }
         break;
       case " ":
@@ -208,12 +209,7 @@ window.addEventListener("keydown", (ev) => {
       //console.log("left");
     } else if (gp.buttons[12].value > 0 || gp.buttons[12].pressed) {
       //console.log("up");
-      keys.w.pressed = true;
-      //player.lastKey = "w";
-      if (player.velocity.y == 0) {
-        player.velocity.y = -20;
-          player.grounded = false;
-      }
+     
     } else if (gp.buttons[13].value > 0 || gp.buttons[13].pressed) {
       //console.log("down");
     }
