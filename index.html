@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Skeleton</title>
+    <style>
+        *{
+            margin: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; width:800px; font-size:25px">
+        <div id="gameScore" style="width:50%">Score: </div>
+        <div id="gameTimer" style="width:50%">Timer: </div>
+    </div>
+    <div id="gameMenu" style="display: none; position: absolute; top: 300px; left:325px; color:white; font-size: 40px;">Paused</div>
+    <canvas></canvas>
+    <div id="gameDispControls"><b>Movement: Up, Left, Right; Fire: Space; </b>(Beta:: Controller - Dpad: Up, Left, Right; Fire: X/A)</div>
+    <div id="gameDispControls2"><b>Pause: P; Restart: P (on Game Over)</b></div>
+    <script src="./utils.js"></script>
+    <script src="./classes.js"></script>
+    <script src="./index.js"></script>
+</body>
+</html>
