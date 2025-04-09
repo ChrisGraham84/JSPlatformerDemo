@@ -1,6 +1,6 @@
 //Classes
 class Sprite {
-    constructor({ position, height, width, velocity, color = "red", offset, isStatic }) {
+    constructor({ position, height, width, velocity, color = "red", offset, isStatic, gravModifier = 1 }) {
       this.position = position;
       this.velocity = velocity;
       this.height = height;
@@ -21,6 +21,9 @@ class Sprite {
       this.grounded = false;
       this.airborn = true;
       this.isStatic = isStatic;
+      this.gravModifier = gravModifier;
+      this.countdown = 100;
+      this.alive = true;
     }
   
     draw() {
@@ -54,7 +57,7 @@ class Sprite {
         this.velocity.y = 0;
       }else{
         if(!this.isStatic){
-          this.velocity.y += gravity;
+          this.velocity.y += gravity * this.gravModifier;
         } 
       } 
     }

@@ -9,9 +9,15 @@ const gravity = 1;
 const PROPULSION = -12;
 const SPEED = 8;
 
+let dropRate = 700;
 let controllerEnabled = false;
 let can_fire = true;
 let isGameOver = false;
+let isPaused = false;
+let gameMenu = document.querySelector("#gameMenu");
+let gameTimer = document.querySelector("#gameTimer");
+let gameScore = document.querySelector("#gameScore");
+let score = 0;
 
 c.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -53,7 +59,7 @@ const player = new Sprite({
       let _y = Math.random() * 300 + 300;
 
       while((_y >= ground.position.y - 30)){
-        console.log("in ground")
+        //console.log("in ground")
         _x = Math.random() * canvas.width;
         _y = Math.random() * 300 + 200;
       }
@@ -69,6 +75,35 @@ const player = new Sprite({
     });
 
   }
+
+
+  //falling boulders
+  boulders = []
+  gravMod = 1
+  let difficulty = 1;
+const intervalId = window.setInterval(() => {
+  const index = Math.floor(Math.random() * canvas.width);
+
+ 
+ for(let i = 0; i < difficulty; i++ ){
+  boulders.push(
+    new Sprite({
+      position: { x: index, y: 0},
+      velocity: { x: 0, y: 0 },
+      height: 50, 
+      width: 50,
+      color: "brown",
+      offset: { x: 0, y: 0 },
+      isStatic:  false,
+      gravModifier: gravMod
+    })
+  )
+ }
+
+
+}, dropRate)
+
+
   // const platform = new Sprite({
   //   position: { x:canvas.width - 120, y: canvas.height -270 },
   //   width: 120, 
@@ -80,7 +115,7 @@ const player = new Sprite({
   // });
 
 function animate(){
-    window.requestAnimationFrame(animate);
+  if(!isPaused) window.requestAnimationFrame(animate);
     //console.log('animating');
 
 
@@ -94,24 +129,52 @@ function animate(){
     c.fillRect(0, 0, canvas.width, canvas.height);
 
     player.update();
-    ground.update();
+    gameScore.innerHTML = `Score: ${score}`;
+   
+      
+    //Pickups
+    //pickup.countdown -= 1;
+    if(pickup.countdown == 0){
+      window.setInterval( GeneratePickup(), 100);
+    }else{
+      if(rectangularCollision({rectangle: player, rectangle2: pickup})){
+        player.color = "darksalmon"
+        window.setTimeout(()=>{
+          player.color = "pink"
+        }, 100)
+        pickup.alive = false;
+        if(dropRate >= 50){
+          dropRate -= 50;
+          gravMod += .2;
+          difficulty += 1;
+        }
+        score  += 1;
+        GeneratePickup();
+        //console.log(pickup);
+     }
+     //console.log(difficulty);
+    }
     pickup.update();
+   
 
-    if(rectangularCollision({rectangle: player, rectangle2: pickup})){
-      pickup.alive = false;
-      //score  += 1;
-      GeneratePickup();
-      //console.log(pickup);
+   for (let i = boulders.length - 1; i >= 0; i--) {
+      const boulder = boulders[i];
+      boulder.update();
+
+    if(rectangularCollision({rectangle: boulder, rectangle2: player})){
+      isPaused = true;
+    }
+
+      if(boulder.position.y > canvas.height - 70){
+        boulders.splice(i,1)
+      }
    }
-
-    
-    //platform.update()
- 
 
 
     //player movement
 
     
+   ground.update();
     if(rectangularCollision({rectangle: player, rectangle2: ground})){
     //console.log("collide")
        player.velocity.x = -(player.velocity.x + 1);
@@ -137,8 +200,18 @@ function animate(){
     player.velocity.x = 0;
     if (keys.a.pressed ) {
       player.velocity.x = -SPEED;
+    //  console.log(keys.a.pressed)
     } else if (keys.d.pressed) {
       player.velocity.x = SPEED;
+    }
+    
+    if(keys.w.pressed){
+      if (player.velocity.y == 0 && !player.airborn) {
+        //console.log( keys.w.pressed)  
+        player.velocity.y = -20;
+        player.grounded = false;
+        player.airborn = true;
+      }
     }
 }
 
